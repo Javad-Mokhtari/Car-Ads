@@ -4,7 +4,7 @@ import mysql.connector
 # Connect to MySQL
 my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi')
 my_cursor = my_db.cursor()
-my_cursor.execute("DROP DATABASE CarInfo;")
+my_cursor.execute("DROP DATABASE IF EXISTS CarInfo;")
 
 # Create database and table
 my_cursor.execute("CREATE DATABASE IF NOT EXISTS CarInfo;")
