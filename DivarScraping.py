@@ -36,25 +36,34 @@ def get_ads_links(my_url, number, html_class: str):
     return links
 
 
-# cars_information() function returns a 2D list from cars information
-def cars_information(link):
+# car_information() function returns a dictionary containing of car information
+def car_information(link):
     response = requests.get(link)
     soup = BeautifulSoup(response.text, 'html5lib')
-    # car = soup.find('p', class_="kt-base-row__title kt-unexpandable-row__title", text='برند و تیپ')
-    car = soup.find_all('div', class_="kt-unexpandable-row__action kt-text-truncate", href=True)
-    # model_link = list(filter(lambda a: 'برند و تیپ' in car.find_all('p', class_="kt-base-row__title "
-    #                                                                            "kt-unexpandable-row__title"), car))
-    # print(model_link)
-    print(car)
+    car_model = soup.find('a', class_="kt-unexpandable-row__action kt-text-truncate", href=True)
+    if car_model:
+        car = re.findall(r"/car/(.+)/(.+)/", car_model['href'])
+        if car:
+            brand, model = car[0]
+            similar_link = 'https://divar.ir/s/tehran/car/' + str(brand + '/' + model)
+            print(similar_link, '\n', brand, model)
+        else:
+            car = re.findall(r"/car/(.+)/(.+)", car_model['href'])
+            if car:
+                brand, model = car[0]
+                similar_link = 'https://divar.ir/s/tehran/car/' + str(brand + '/' + model)
+                print(similar_link, '\n', brand, model)
+            else:
+                car = re.findall(r"/car/(.+)", car_model['href'])
+                if car:
+                    brand = car[0]
+                    model = None
+                    similar_link = 'https://divar.ir/s/tehran/car/' + str(brand + '/' + model)
+                    print(similar_link, '\n', brand, model)
 
-"""    if car is not None:
-        car = re.findall(r"/car/(.+)/*(.*)", car['href'])
-    if car is not None:
-        brand, model = car[0]
-        print(brand, model)"""
 
 # Scraping car information from https://divar.ir/
 site_url = "https://divar.ir/s/tehran/auto?non-negotiable=true&exchange=exclude-exchanges"
 urls = get_ads_links(site_url, 100, "kt-post-card kt-post-card--outlined")
 for url in urls:
-    cars_information(url)
+    car_information(url)
