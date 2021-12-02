@@ -1,7 +1,6 @@
 from DivarScraping import *
 import Database
 from Database import insert_data
-import os, stat
 
 
 def save_data(n):
@@ -22,9 +21,9 @@ def latest_ads(n):
             car_info = car_information(url)
             if car_info:
                 for key, value in car_info.items():
-                    file.write('{0:>15s}:  {1:>20s}\t'.format(key, value))
+                    file.write('{0:20s}: {1:25s}\n'.format(key, value))
                 counter += 1
-                file.write('\n')
+                file.write('\n\n\n')
     file.close()
 
 
