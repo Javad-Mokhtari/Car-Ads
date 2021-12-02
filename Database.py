@@ -5,7 +5,6 @@ from DivarScraping import car_data
 # Connect to MySQL
 my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi')
 my_cursor = my_db.cursor()
-
 # Create database and table
 my_cursor.execute("CREATE DATABASE IF NOT EXISTS CarInfo;")
 my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi', database='CarInfo')
@@ -16,9 +15,8 @@ my_cursor.execute("""CREATE TABLE IF NOT EXISTS CarFeatures(brand VARCHAR(255), 
 
 
 def insert_data(data_dic):
-    columns = data_dic.keys()
     values = []
-    for column in columns:
+    for column in data_dic.keys():
         values.append(data_dic[column])
     my_cursor.execute("INSERT INTO CarFeatures VALUES {};".format(tuple(values)))
     my_db.commit()
