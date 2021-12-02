@@ -72,8 +72,14 @@ def car_data(link):
             car_info_title = soup.find_all('p', class_="kt-base-row__title kt-unexpandable-row__title")
             car_info_values = soup.find_all('p', class_="kt-unexpandable-row__value")
             other_info = {}
-            for i in range(len(car_info_values)):
-                other_info[car_info_title[i + 1].string] = car_info_values[i].string
+            if len(car_model) == 1:
+                for i in range(len(car_info_values)):
+                    other_info[car_info_title[i + 1].string] = car_info_values[i].string
+            elif len(car_model) == 2:
+                for i in range(len(car_info_values)):
+                    other_info[car_info_title[i + 2].string] = car_info_values[i].string
+            else:
+                return
             price = car_info_values[-1].string
             # Only values for the price are stored in database that are integer
             if price in {'غیرقابل نمایش', 'برای معاوضه', 'توافقی'}:
@@ -95,9 +101,16 @@ def car_data(link):
             if insurance_deadline:
                 if ' ماه' in insurance_deadline:
                     insurance_deadline = int(insurance_deadline.replace(' ماه', ''))
-            car_info = {'brand': brand, 'model': model, 'worked': worked, 'year': year, 'color': color,
-                        'price': price, 'engine_status': engine_status, 'chassis_status': chassis_status,
-                        'body_status': body_status, 'insurance_deadline': insurance_deadline}
+            car_info = {'brand': brand, 'model': model, 'year': year, 'worked': worked, 'price': price, 'color': color,
+                        'engine_status': engine_status, 'chassis_status': chassis_status, 'body_status': body_status,
+                        'insurance_deadline': insurance_deadline}
+            for k, v in car_info.items():
+                if v is None:
+                    if k in {'brand', 'model', 'color', 'engine_status', 'chassis_status', 'body_status'}:
+                        value = ''
+                        car_info[k] = value
+                    else:
+                        return
             return car_info
         else:
             return

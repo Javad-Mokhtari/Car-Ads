@@ -1,15 +1,24 @@
 import mysql.connector
+from DivarScraping import car_data
 
 
 # Connect to MySQL
 my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi')
 my_cursor = my_db.cursor()
-my_cursor.execute("DROP DATABASE IF EXISTS CarInfo;")
 
 # Create database and table
 my_cursor.execute("CREATE DATABASE IF NOT EXISTS CarInfo;")
 my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi', database='CarInfo')
 my_cursor = my_db.cursor()
-my_cursor.execute("""CREATE TABLE IF NOT EXISTS CarFeatures(brand VARCHAR(25), model VARCHAR(20), year INT(20),
-     worked INT(255), price BIGINT(255), color VARCHAR(20), engine_status VARCHAR(20), chassis_status VARCHAR(25),
-     body_status VARCHAR(25), insurance_deadline INT(20));""")
+my_cursor.execute("""CREATE TABLE IF NOT EXISTS CarFeatures(brand VARCHAR(255), model VARCHAR(255), year INT(255),
+     worked INT(255), price BIGINT(255), color VARCHAR(255), engine_status VARCHAR(255), chassis_status VARCHAR(255),
+     body_status VARCHAR(255), insurance_deadline INT(255));""")
+
+
+def insert_data(data_dic):
+    columns = data_dic.keys()
+    values = []
+    for column in columns:
+        values.append(data_dic[column])
+    my_cursor.execute("INSERT INTO CarFeatures VALUES {};".format(tuple(values)))
+    my_db.commit()
