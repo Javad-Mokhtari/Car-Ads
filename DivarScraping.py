@@ -22,7 +22,7 @@ def car_ad_links(number):
     for i in range(number):
         # Once scroll returns bs4 parsers the page_source
         soup = BeautifulSoup(web_driver.page_source, 'html5lib')
-        # Them we close the driver as soup_a is storing the page source
+        # Then we close the driver as soup_a is storing the page source
         ads = soup.find_all('a', class_="kt-post-card kt-post-card--outlined", href=True)
         # Empty array to store the links
         for ad in ads:
@@ -37,85 +37,88 @@ def car_ad_links(number):
 
 # car_data() function returns a dictionary containing of car data for using in database
 def car_data(link):
-    global brand, model
-    response = requests.get(link)
-    if response.ok:
-        soup = BeautifulSoup(response.text, 'html5lib')
-        # brand and model values is extracted from car ad URL
-        car_model = soup.find_all('a', class_="kt-unexpandable-row__action kt-text-truncate", href=True)
-        if car_model:
-            car = re.findall(r"/car/(.+)/(.+)/", car_model[-1]['href'])
-            if car:
-                brand, model = car[0]
-            else:
-                car = re.findall(r"/car/(.+)/(.+)", car_model[-1]['href'])
+    try:
+        global brand, model
+        response = requests.get(link)
+        if response.ok:
+            soup = BeautifulSoup(response.text, 'html5lib')
+            # brand and model values is extracted from car ad URL
+            car_model = soup.find_all('a', class_="kt-unexpandable-row__action kt-text-truncate", href=True)
+            if car_model:
+                car = re.findall(r"/car/(.+)/(.+)/", car_model[-1]['href'])
                 if car:
                     brand, model = car[0]
                 else:
-                    car = re.findall(r"/car/(.+)", car_model[-1]['href'])
+                    car = re.findall(r"/car/(.+)/(.+)", car_model[-1]['href'])
                     if car:
-                        brand = car[0]
-                        model = ''
-            # This condition is used to ensuring for brand variables values
-            if brand == 'dealers':
-                return
-            # car_WYC variable is a list containing worked, year and color features
-            car_WYC = soup.find_all('span', class_="kt-group-row-item__value")
-            worked = car_WYC[0].string
-            if '٫' in worked:
-                worked = car_WYC[0].string.replace('٫', '')
-            year = car_WYC[1].string
-            if 'قبل از ' in year:
-                year = car_WYC[1].string.replace('قبل از ', '')
-            worked, year, color = int(worked), int(year), car_WYC[2].string
-            # Creating a dictionary for other car features
-            car_info_title = soup.find_all('p', class_="kt-base-row__title kt-unexpandable-row__title")
-            car_info_values = soup.find_all('p', class_="kt-unexpandable-row__value")
-            other_info = {}
-            if len(car_model) == 1:
-                for i in range(len(car_info_values)):
-                    other_info[car_info_title[i + 1].string] = car_info_values[i].string
-            elif len(car_model) == 2:
-                for i in range(len(car_info_values)):
-                    other_info[car_info_title[i + 2].string] = car_info_values[i].string
-            else:
-                return
-            price = car_info_values[-1].string
-            # Only values for the price are stored in database that are integer
-            if price in {'غیرقابل نمایش', 'برای معاوضه', 'توافقی'}:
-                return
-            else:
-                if '٬' in price:
-                    price = price.replace('٬', '')
-                if ' تومان' in price:
-                    price = price.replace(' تومان', '')
-                price = int(price)
-            other_info.setdefault('وضعیت موتور')
-            engine_status = other_info['وضعیت موتور']
-            other_info.setdefault('وضعیت شاسی‌ها')
-            chassis_status = other_info['وضعیت شاسی‌ها']
-            other_info.setdefault('وضعیت بدنه')
-            body_status = other_info['وضعیت بدنه']
-            other_info.setdefault('مهلت بیمهٔ شخص ثالث')
-            insurance_deadline = other_info['مهلت بیمهٔ شخص ثالث']
-            if insurance_deadline:
-                if ' ماه' in insurance_deadline:
-                    insurance_deadline = int(insurance_deadline.replace(' ماه', ''))
-            car_info = {'brand': brand, 'model': model, 'year': year, 'worked': worked, 'price': price, 'color': color,
-                        'engine_status': engine_status, 'chassis_status': chassis_status, 'body_status': body_status,
-                        'insurance_deadline': insurance_deadline}
-            for k, v in car_info.items():
-                if v is None:
-                    if k in {'brand', 'model', 'color', 'engine_status', 'chassis_status', 'body_status'}:
-                        value = ''
-                        car_info[k] = value
+                        brand, model = car[0]
                     else:
-                        return
-            return car_info
+                        car = re.findall(r"/car/(.+)", car_model[-1]['href'])
+                        if car:
+                            brand = car[0]
+                            model = ''
+                # This condition is used to ensuring for brand variables values
+                if brand == 'dealers':
+                    return
+                # car_WYC variable is a list containing worked, year and color features
+                car_WYC = soup.find_all('span', class_="kt-group-row-item__value")
+                worked = car_WYC[0].string
+                if '٫' in worked:
+                    worked = car_WYC[0].string.replace('٫', '')
+                year = car_WYC[1].string
+                if 'قبل از ' in year:
+                    year = car_WYC[1].string.replace('قبل از ', '')
+                worked, year, color = int(worked), int(year), car_WYC[2].string
+                # Creating a dictionary for other car features
+                car_info_title = soup.find_all('p', class_="kt-base-row__title kt-unexpandable-row__title")
+                car_info_values = soup.find_all('p', class_="kt-unexpandable-row__value")
+                other_info = {}
+                if len(car_model) == 1:
+                    for i in range(len(car_info_values)):
+                        other_info[car_info_title[i + 1].string] = car_info_values[i].string
+                elif len(car_model) == 2:
+                    for i in range(len(car_info_values)):
+                        other_info[car_info_title[i + 2].string] = car_info_values[i].string
+                else:
+                    return
+                price = car_info_values[-1].string
+                # Only values for the price are stored in database that are integer
+                if price in {'غیرقابل نمایش', 'برای معاوضه', 'توافقی'}:
+                    return
+                else:
+                    if '٬' in price:
+                        price = price.replace('٬', '')
+                    if ' تومان' in price:
+                        price = price.replace(' تومان', '')
+                    price = int(price)
+                other_info.setdefault('وضعیت موتور')
+                engine_status = other_info['وضعیت موتور']
+                other_info.setdefault('وضعیت شاسی‌ها')
+                chassis_status = other_info['وضعیت شاسی‌ها']
+                other_info.setdefault('وضعیت بدنه')
+                body_status = other_info['وضعیت بدنه']
+                other_info.setdefault('مهلت بیمهٔ شخص ثالث')
+                insurance_deadline = other_info['مهلت بیمهٔ شخص ثالث']
+                if insurance_deadline:
+                    if ' ماه' in insurance_deadline:
+                        insurance_deadline = int(insurance_deadline.replace(' ماه', ''))
+                car_info = {'brand': brand, 'model': model, 'year': year, 'worked': worked, 'price': price, 'color': color,
+                            'engine_status': engine_status, 'chassis_status': chassis_status, 'body_status': body_status,
+                            'insurance_deadline': insurance_deadline}
+                for k, v in car_info.items():
+                    if v is None:
+                        if k in {'brand', 'model', 'color', 'engine_status', 'chassis_status', 'body_status'}:
+                            value = ''
+                            car_info[k] = value
+                        else:
+                            return
+                return car_info
+            else:
+                return
         else:
             return
-    else:
-        return
+    except:
+        return "Error!"
 
 
 # The similar_ads() function returns a list of similar links
@@ -185,6 +188,10 @@ def car_information(link):
                         'وضعیت بدنه': body_status, 'مهلت بیمهٔ شخص ثالث': insurance_deadline}
             if dealer:
                 car_info.setdefault('نمایشگاه', dealer)
+            for k, v in car_info.items():
+                if v is None:
+                    value = ''
+                    car_info[k] = value
             return car_info
         else:
             return
