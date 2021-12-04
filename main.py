@@ -11,6 +11,7 @@ def save_latest_ads(n):
         data = car_data(url)
         if data != "Error!":
             insert_data(data)
+    print("Done!")
 
 
 def save_favorite_ads(brand, model, n):
@@ -21,8 +22,6 @@ def save_favorite_ads(brand, model, n):
             data = car_data(url)
             if data != "Error!":
                 insert_data(data)
+        print("Done!")
     else:
         return "Error!"
-
-
-save_latest_ads(100)
