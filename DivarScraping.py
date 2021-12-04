@@ -171,8 +171,11 @@ def car_information(link):
 
 
 # The get_ads() function returns n ads with brand and model given
-def get_ads(brand, model, n):
+def get_ads():
     try:
+        brand = input("What car brand ads do you want?")
+        model = input("Please also enter the car model:")
+        n = int(input("How many ads will be displayed to you?"))
         ads_link = 'https://divar.ir/s/tehran/car/' + brand + '/' + model
         if requests.get(ads_link).ok:
             counter = 1
@@ -201,8 +204,9 @@ def get_ads(brand, model, n):
         return
 
 
-def latest_ads(n):
+def latest_ads():
     try:
+        n = int(input("How many recent ads do you want to see?"))
         counter = 1
         num = n * 3
         file = open("Data/latest-car-ads.txt", 'a')
