@@ -180,7 +180,7 @@ def get_ads():
         if requests.get(ads_link).ok:
             counter = 1
             num = n * 3
-            file = open("Data/latest-car-ads.txt", 'a')
+            file = open("Saved_Data/{}_{}_ads.txt".format(brand, model), 'a')
             urls = car_ad_links(num, ads_link)
             for url in urls:
                 if counter <= n:
@@ -209,7 +209,7 @@ def latest_ads():
         n = int(input("How many recent ads do you want to see?"))
         counter = 1
         num = n * 3
-        file = open("Data/latest-car-ads.txt", 'a')
+        file = open("Saved_Data/latest-car-ads.txt", 'a')
         urls = car_ad_links(num, "https://divar.ir/s/tehran/auto")
         for url in urls:
             if counter <= n:
