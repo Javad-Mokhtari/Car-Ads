@@ -209,7 +209,7 @@ def latest_ads():
         n = int(input("How many recent ads do you want to see?"))
         counter = 1
         num = n * 3
-        file = open("Saved_Data/latest-car-ads.txt", 'a')
+        file = open("Saved_Data/latest_car_ads.txt", 'a')
         urls = car_ad_links(num, "https://divar.ir/s/tehran/auto")
         for url in urls:
             if counter <= n:
