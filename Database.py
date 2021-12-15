@@ -1,5 +1,5 @@
 import mysql.connector
-from DivarScraping import car_data
+from DivarScraping import *
 import pandas as pd
 
 
@@ -21,6 +21,8 @@ def database_settings():
 # This function is defined for saving a row to database with input dicrionary
 def insert_data(data_dic):
     values = tuple(data_dic.values())
+    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi', database='CarInfo')
+    my_cursor = my_db.cursor()
     # We use this condition to prevent duplicate data insert
     dataframe = pd.read_sql("SELECT ID FROM CarFeatures WHERE ID = '{}';".format(values[0]), my_db)
     if dataframe.empty:
@@ -40,10 +42,10 @@ def save_latest_ads(n):
     print("Done!")
 
 
-def save_favorite_ads(brand, model, n):
+def save_desired_ads(brand, model, n):
     ads_url = 'https://divar.ir/s/tehran/car/' + brand + '/' + model
     if requests.get(ads_url).ok:
-        urls = car_ad_links(n, ads_link)
+        urls = car_ad_links(n, ads_url)
         for url in urls:
             data = car_data(url)
             if data != "Error!":
@@ -55,5 +57,6 @@ def save_favorite_ads(brand, model, n):
 
 # It gives to us a csv file of data
 def export_data():
+    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi', database='CarInfo')
     dataframe = pd.read_sql("SELECT * FROM CarFeatures;", my_db)
-    dataframe.to_csv("Data/Cars-data.csv")
+    dataframe.to_csv("Saved_Data/Cars-data.csv")
