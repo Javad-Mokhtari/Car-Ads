@@ -6,11 +6,11 @@ import pandas as pd
 # With this function we can create database and table and connect to it
 def database_settings():
     # Connecting to localhost
-    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi')
+    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='YOUR_ROOT_PASSWORD')
     my_cursor = my_db.cursor()
     # Creating database
     my_cursor.execute("CREATE DATABASE IF NOT EXISTS CarInfo;")
-    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi', database='CarInfo')
+    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='YOUR_ROOT_PASSWORD', database='CarInfo')
     my_cursor = my_db.cursor()
     # Creating table with its features
     my_cursor.execute("""CREATE TABLE IF NOT EXISTS CarFeatures(ID VARCHAR(255), brand VARCHAR(255), model VARCHAR(255),
@@ -21,7 +21,7 @@ def database_settings():
 # This function is defined for saving a row to database with input dicrionary
 def insert_data(data_dic):
     values = tuple(data_dic.values())
-    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi', database='CarInfo')
+    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='YOUR_ROOT_PASSWORD', database='CarInfo')
     my_cursor = my_db.cursor()
     # We use this condition to prevent duplicate data insert
     dataframe = pd.read_sql("SELECT ID FROM CarFeatures WHERE ID = '{}';".format(values[0]), my_db)
@@ -57,6 +57,6 @@ def save_desired_ads(brand, model, n):
 
 # It gives to us a csv file of data
 def export_data():
-    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi', database='CarInfo')
+    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='YOUR_ROOT_PASSWORD', database='CarInfo')
     dataframe = pd.read_sql("SELECT * FROM CarFeatures;", my_db)
     dataframe.to_csv("Saved_Data/Cars-data.csv")

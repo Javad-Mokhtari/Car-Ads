@@ -8,7 +8,7 @@ import numpy as np
 # the amount of used from car compared to year of production in a scatter chart and saves them to 'Saved_Data' folder
 def frequency():
     # Connecting to database and reading cars brand data
-    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='javad76mi', database='CarInfo')
+    my_db = mysql.connector.connect(host='127.0.0.1', user='root', password='YOUR_ROOT_PASSWORD', database='CarInfo')
     ads_number = len(pd.read_sql("SELECT ID FROM CarFeatures;", my_db))
     brand_df = pd.read_sql("SELECT brand, COUNT(brand) FROM CarFeatures GROUP BY brand;", my_db)
     brand_frequency_df = pd.DataFrame(columns=['Brand', 'frequency'])
